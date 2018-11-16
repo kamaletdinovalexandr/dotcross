@@ -1,0 +1,1 @@
+﻿public enum Players { NONE, PLAYER1, PLAYER2 };

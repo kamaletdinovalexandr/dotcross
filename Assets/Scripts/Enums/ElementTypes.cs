@@ -1,0 +1,1 @@
+﻿public enum ElementTypes { NONE, CROSS, DOT };
