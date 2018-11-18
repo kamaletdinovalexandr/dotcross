@@ -1,1 +1,1 @@
-﻿public enum ElementTypes { NONE, CROSS, DOT };
+﻿public enum ElementTypes { none, cross, dot };

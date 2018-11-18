@@ -8,7 +8,7 @@ public class BoardCellView : MonoBehaviour {
 	[SerializeField] GameObject dotIcon;
 	[SerializeField] GameObject crossIcon;
 	private Button button;
-	public Vector2Int Position;
+	public Vector2Int Position { get; set; }
 
 	private void Start() {
 		button = GetComponent<Button>();
@@ -17,17 +17,24 @@ public class BoardCellView : MonoBehaviour {
 		crossIcon.SetActive(false);
     }
 
-	private void SetIcon(Sprite icon) {
-		if (icon == null)
-			return;
-
-		GetComponent<Image>().sprite = icon;
-		button.interactable = false;
+	public void SetElement(ElementTypes element) {
+		switch (element) {
+            case ElementTypes.cross:
+                dotIcon.SetActive(false);
+                crossIcon.SetActive(true);
+                break;
+            case ElementTypes.dot:
+                dotIcon.SetActive(true);
+                crossIcon.SetActive(false);
+                break;
+            default:
+                return;
+        }
+        button.interactable = false;
 	}
 
 	private void OnClick() {
 		GameController.Instance.TryMakeMove(this);
-
 	}
 
 }

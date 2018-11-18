@@ -3,55 +3,41 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameController : MonoBehaviour {
-	public static GameController Instance = null;
-	[SerializeField] private GameObject CellPrefab;
-	[SerializeField] private GameObject[,] BoardCellViews;
-	[SerializeField] private BoardCellModel[,] BoardCellModels;
-	[SerializeField] private Transform BoardTransform;
+public class GameController : Singleton<GameController> {
+    [SerializeField] private BoardCellModel[,] BoardCellModels;
+    private Player _curentPlayer;
+    private Player Player1;
+    private Player Player2;
+    
+    internal override void Init() {
+        Player1 = new Player(Players.player1, ElementTypes.cross);
+        Player2 = new Player(Players.player2, ElementTypes.dot);
+        _curentPlayer = Player1;
 
-	private int boardWidth = 3;
-	private int boardHeigh = 3;
-	private float _celOffset = 280;
-	private float _offsetX = 210;
-	private float _offsetY = 130;
+        BoardCellModels = new BoardCellModel[BoardManager.Instance.BoardWidth, BoardManager.Instance.BoardHeigh];
+        for (int i = 0; i < BoardManager.Instance.BoardWidth; i++) {
+            for (int j = 0; j < BoardManager.Instance.BoardHeigh; j++) {
+                var cellModel = new BoardCellModel(ElementTypes.none);
+                cellModel.ElementType = ElementTypes.none;
+                BoardCellModels[i, j] = cellModel;
+            }
+        }
+    }
 
-	void Awake() {
-		if (Instance == null) {
-			Instance = this;
-		} else
-		   if (Instance != this) {
-			Destroy(gameObject);
-		}
-		BoardInit();
-	}
+    private void ChangePlayer() {
+        _curentPlayer = _curentPlayer == Player1 ? Player2 : Player1;
+    }
 
-	private void BoardInit() {
-		BoardCellViews = new GameObject[boardWidth, boardHeigh];
-		BoardCellModels = new BoardCellModel[boardWidth, boardHeigh];
-		for (int i = 0; i < boardWidth; i++) {
-			for (int j = 0; j < boardHeigh; j++) {
-				
-				var cellObj = Instantiate(CellPrefab, BoardTransform);
-				var position = new Vector2(i * _celOffset + _offsetX, j * _celOffset + _offsetY);
-				cellObj.GetComponent<RectTransform>().position = position;
+    public void TryMakeMove(BoardCellView cell) {
+        if (BoardCellModels[cell.Position.x, cell.Position.y].ElementType != ElementTypes.none)
+            return;
+        BoardCellModels[cell.Position.x, cell.Position.y].ElementType = _curentPlayer.Element;
+        cell.SetElement(_curentPlayer.Element);
+        CheckWin();
+        ChangePlayer();
+    }
 
-				var 
+    private void CheckWin() {
 
-
-
-
-				BoardCellViews[i, j] = cellObj;
-				var cellModel = cellObj.GetComponent<>();
-				cellModel.Position = new Vector2Int(i, j);
-				cellModel.Players = Players.NONE;
-				cellModel.ElementType = ElementTypes.NONE;
-				BoardCellModels[i, j] = cellModel;
-			}
-		}
-	}
-
-	public void TryMakeMove(BoardCellView targetCell) {
-		var
-	}
+    }
 }
