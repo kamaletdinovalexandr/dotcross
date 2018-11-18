@@ -1,2 +1,0 @@
-/Users/a.kamaletdinov/Unity/zerocrosses/ZeroCross/Temp/UnityVS_obj/Debug/ZeroCross.csprojResolveAssemblyReference.cache
-/Users/a.kamaletdinov/Unity/zerocrosses/ZeroCross/Temp/UnityVS_obj/Debug/ZeroCross.csproj.CoreCompileInputs.cache
