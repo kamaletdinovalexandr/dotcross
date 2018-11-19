@@ -10,12 +10,12 @@ public class GameController : Singleton<GameController> {
     [SerializeField] private BoardCellModel[,] BoardCellModels;
     private Player _curentPlayer;
     private Player Player1;
-    private Player Player2;
+    private VirtualPlayer Player2;
     private GameState _gameState;
     
     internal override void Init() {
         Player1 = new Player(Players.player1, ElementTypes.cross);
-        Player2 = new Player(Players.player2, ElementTypes.dot);
+        Player2 = new VirtualPlayer(Players.player2, ElementTypes.dot);
         _curentPlayer = Player1;
 		_gameState = GameState.started;
 
@@ -45,7 +45,9 @@ public class GameController : Singleton<GameController> {
 
     private void ChangePlayer() {
         _curentPlayer = _curentPlayer == Player1 ? Player2 : Player1;
-        NotifyTurn();
+		NotifyTurn();
+		if (_curentPlayer == Player2)
+			Player2.MakeMove();
     }
 
     private void NotifyTurn() {

@@ -8,7 +8,7 @@ public class VirtualPlayer : Player {
 	public VirtualPlayer(Players playerType, ElementTypes element) : base(playerType, element) {
 	}
 
-	private void MakeMove() {
+	public void MakeMove() {
 		bool moveAvailable = false;
 		int x = 0;
 		int y = 0;
