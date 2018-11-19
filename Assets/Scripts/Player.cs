@@ -2,7 +2,7 @@
 using UnityEditor;
 
 public class Player  {
-    public Players PlayerType  { get; private set; }
+    public Players PlayerType  { get; set; }
     public ElementTypes Element { get; set; }
 
     public Player(Players playerType, ElementTypes element) {

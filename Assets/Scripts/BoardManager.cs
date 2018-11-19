@@ -17,6 +17,7 @@ public class BoardManager : Singleton<BoardManager> {
         for (int i = 0; i < BoardWidth; i++) {
             for (int j = 0; j < BoardHeigh; j++) {
                 var go = Instantiate(CellPrefab, BoardTransform);
+				go.name = "CellView_" + i + "_" + j;
                 var position = new Vector2(i * CelOffset + OffsetX, j * CelOffset + OffsetY);
                 go.GetComponent<RectTransform>().position = position;
                var cellView = go.GetComponent<BoardCellView>();
@@ -25,4 +26,8 @@ public class BoardManager : Singleton<BoardManager> {
             }
         }
     }
+
+	public BoardCellView GetCellView(int x, int y) {
+		return BoardCellViews[x, y];
+	}
 }

@@ -33,8 +33,7 @@ public class BoardCellView : MonoBehaviour {
         button.interactable = false;
 	}
 
-	private void OnClick() {
+	public void OnClick() {
 		GameController.Instance.TryMakeMove(this);
 	}
-
 }

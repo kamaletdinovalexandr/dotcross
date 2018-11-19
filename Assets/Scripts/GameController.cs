@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEditor;
 
 public class GameController : Singleton<GameController> {
-    private enum GameState { stated, GameOver }
+    private enum GameState { started, noMoves, win }
 
     [SerializeField] private BoardCellModel[,] BoardCellModels;
     private Player _curentPlayer;
@@ -17,7 +17,7 @@ public class GameController : Singleton<GameController> {
         Player1 = new Player(Players.player1, ElementTypes.cross);
         Player2 = new Player(Players.player2, ElementTypes.dot);
         _curentPlayer = Player1;
-        _gameState = GameState.stated;
+		_gameState = GameState.started;
 
         BoardCellModels = new BoardCellModel[BoardManager.Instance.BoardWidth, BoardManager.Instance.BoardHeigh];
         for (int i = 0; i < BoardManager.Instance.BoardWidth; i++) {
@@ -31,10 +31,16 @@ public class GameController : Singleton<GameController> {
     }
 
     private void Update() {
-       if (_gameState == GameState.GameOver) {
+		if (_gameState == GameState.started)
+			return;
+
+       if (_gameState == GameState.win)
             Debug.Log("Player " + _curentPlayer.PlayerType.ToString() + " Win!!!");
-            EditorApplication.isPlaying = false;
-        }
+
+		if (_gameState == GameState.noMoves)
+			Debug.Log("No moves left");
+
+		EditorApplication.isPlaying = false;
     }
 
     private void ChangePlayer() {
@@ -46,20 +52,46 @@ public class GameController : Singleton<GameController> {
         Debug.Log(_curentPlayer.PlayerType.ToString() + " turn");
     }
 
-    public void TryMakeMove(BoardCellView cell) {
+    public void  TryMakeMove(BoardCellView cell) {
         if (BoardCellModels[cell.Position.x, cell.Position.y].ElementType != ElementTypes.none)
             return;
 
         BoardCellModels[cell.Position.x, cell.Position.y].ElementType = _curentPlayer.Element;
         cell.SetElement(_curentPlayer.Element);
-        if (CheckWin()) 
-            _gameState = GameState.GameOver;
+		if (!CheckMovesAvailable()) {
+			_gameState = GameState.noMoves;
+		} 
+		else if (CheckWin()) 
+            _gameState = GameState.win;
         else
             ChangePlayer();
+		return;
     }
 
+	public bool IsCellAvailable(int x, int y) {
+		return BoardCellModels[x, y].ElementType == ElementTypes.none;
+	}
+
+	private bool CheckMovesAvailable() {
+		for (int i = 0; i < BoardManager.Instance.BoardWidth; i++) {
+			for (int j = 0; j < BoardManager.Instance.BoardHeigh; j++) {
+				if (BoardCellModels[i, j].ElementType == ElementTypes.none)
+					return true;
+			}
+		}
+		return false;
+	}
+
     private bool CheckWin() {
-        return _curentPlayer.Element == BoardCellModels[0, 0].ElementType
+		return _curentPlayer.Element == BoardCellModels[0, 0].ElementType
+			&& _curentPlayer.Element == BoardCellModels[1, 1].ElementType
+			&& _curentPlayer.Element == BoardCellModels[2, 2].ElementType
+
+			|| _curentPlayer.Element == BoardCellModels[2, 0].ElementType
+			&& _curentPlayer.Element == BoardCellModels[1, 1].ElementType
+			&& _curentPlayer.Element == BoardCellModels[0, 2].ElementType
+
+			|| _curentPlayer.Element == BoardCellModels[0, 0].ElementType
             && _curentPlayer.Element == BoardCellModels[0, 1].ElementType
             && _curentPlayer.Element == BoardCellModels[0, 2].ElementType
             || _curentPlayer.Element == BoardCellModels[1, 0].ElementType
@@ -77,14 +109,6 @@ public class GameController : Singleton<GameController> {
             && _curentPlayer.Element == BoardCellModels[2, 1].ElementType
             || _curentPlayer.Element == BoardCellModels[0, 2].ElementType
             && _curentPlayer.Element == BoardCellModels[1, 2].ElementType
-            && _curentPlayer.Element == BoardCellModels[2, 2].ElementType
-            
-            || _curentPlayer.Element == BoardCellModels[0, 0].ElementType
-            && _curentPlayer.Element == BoardCellModels[1, 1].ElementType
-            && _curentPlayer.Element == BoardCellModels[2, 2].ElementType
-
-            || _curentPlayer.Element == BoardCellModels[2, 2].ElementType
-            && _curentPlayer.Element == BoardCellModels[1, 1].ElementType
-            && _curentPlayer.Element == BoardCellModels[0, 0].ElementType;
+            && _curentPlayer.Element == BoardCellModels[2, 2].ElementType;
     }
 }
